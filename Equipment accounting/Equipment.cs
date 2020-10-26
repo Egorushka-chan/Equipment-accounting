@@ -19,8 +19,8 @@ namespace Equipment_accounting
 
         private int iN;
         private string name;
-        private string subdivision;
-        private string state;
+        private Subdivision subdivision;
+        private State state;
 
         public string Name 
         { 
@@ -42,7 +42,7 @@ namespace Equipment_accounting
             }
         }
 
-        public string Subdivision
+        public Subdivision Subdivision
         {
             get => subdivision;
             set
@@ -52,7 +52,7 @@ namespace Equipment_accounting
             }
         }
 
-        public string State
+        public State State
         {
             get => state;
             set
