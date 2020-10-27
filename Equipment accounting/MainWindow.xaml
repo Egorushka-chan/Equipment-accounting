@@ -89,7 +89,7 @@
                             <RowDefinition Height="176*"/>
                             <RowDefinition Height="21*"/>
                         </Grid.RowDefinitions>
-                        <CheckBox Content="Данные связанных таблиц" Grid.Row="1" Margin="10,0" VerticalContentAlignment="Center"/>
+                        <Button Content="Поиск" Style="{StaticResource ButtonStyle}" Grid.Row="1" Margin="10,0,10,-9" VerticalContentAlignment="Center"/>
                         <ListBox/>
                     </Grid>
                 </GroupBox>
