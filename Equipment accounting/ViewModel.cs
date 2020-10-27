@@ -21,7 +21,7 @@ namespace Equipment_accounting
             }
                 
         }
-
+        //
         public static string ConnectionInfo = "server = localhost;port = 3306;username=root;password=root;database=equipment accounting";
 
         private ObservableCollection<string> QueriesToBeExecuted = new ObservableCollection<string>();
