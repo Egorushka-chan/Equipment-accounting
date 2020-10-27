@@ -31,7 +31,7 @@ namespace Equipment_accounting
                 OnProperyChanged("Name");
             } 
         }
-
+        
         public int IN
         {
             get => iN;

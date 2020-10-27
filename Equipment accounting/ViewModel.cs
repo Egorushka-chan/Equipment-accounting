@@ -16,13 +16,15 @@ namespace Equipment_accounting
         public void OnPropertyChanged([CallerMemberName] string properity = "")
         {
             if (PropertyChanged != null)
+            {
                 PropertyChanged(this, new PropertyChangedEventArgs(properity));
+            }
+                
         }
 
-        public static string ConnectionInfo = "server = localhost;port = 3306;username=root;password=tamara23;database=equipment accounting";
+        public static string ConnectionInfo = "server = localhost;port = 3306;username=root;password=root;database=equipment accounting";
 
-        private List<string> QueriesToBeExecuted = new List<string>();
-
+        private ObservableCollection<string> QueriesToBeExecuted = new ObservableCollection<string>();
         public ObservableCollection<Equipment> Equipments { get; set; } // Коллекции записей
         public ObservableCollection<State> States { get; set; }
         public ObservableCollection<Subdivision> Subdivisions { get; set; }
@@ -92,8 +94,17 @@ namespace Equipment_accounting
                 OnPropertyChanged("IsNotificationsOn");
             }
         }
-        // dsa
 
+        private bool changesButtonsEnability = false;
+        public bool ChangesButtonsEnability
+        {
+            get => changesButtonsEnability;
+            set
+            {
+                changesButtonsEnability = value;
+                OnPropertyChanged("ChangesButtonsEnability");
+            }
+        }
 
         private RelayCommand openCommand;
         public RelayCommand OpenCommand // Команда для автозаполнения данных в окнах ReplaceWindow и AddWindow
@@ -205,6 +216,7 @@ namespace Equipment_accounting
                       {
                           QueriesToBeExecuted.Add($"DELETE FROM `equipment` WHERE `inventory number` = {SelectedEquipment.IN}");
                           Equipments.Remove(SelectedEquipment);
+                          selectedEquipment = Equipments[0];
                       }
                   }));
             }
@@ -225,9 +237,36 @@ namespace Equipment_accounting
                       {
                           foreach (string query in QueriesToBeExecuted)
                           {
-                              ExecuteDataQuery(query, "Тут не выводится таблицы, так что все равно");
+                              try
+                              {
+                                  ExecuteDataQuery(query, "Тут не выводится таблицы, так что все равно");
+                              }
+                              catch(Exception e)
+                              {
+                                  MessageBox.Show($"Провалено выполенение: {Environment.NewLine}{query}{Environment.NewLine}Ошибка: {e.Message}");
+                              }
                           }
                           QueriesToBeExecuted.Clear();
+                      }
+                  }));
+            }
+        }
+
+        private RelayCommand cancelChangesCommand;
+        public RelayCommand CancelChangesCommand
+        {
+            get
+            {
+                return cancelChangesCommand ??
+                  (cancelChangesCommand = new RelayCommand(obj =>
+                  {
+                      if(MessageBox.Show("Отменить изменения?","Вопрос", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                      {
+                          bool Is = IsNotificationsOn;
+                          IsNotificationsOn = false;
+                          QueriesToBeExecuted.Clear();
+                          InitializeCollections();
+                          IsNotificationsOn = Is;
                       }
                   }));
             }
@@ -251,6 +290,21 @@ namespace Equipment_accounting
 
         public ViewModel() // Инициализация
         {
+            States = new ObservableCollection<State>();
+            Subdivisions = new ObservableCollection<Subdivision>();
+            Equipments = new ObservableCollection<Equipment>();
+            InitializeCollections();
+            Equipments.CollectionChanged += Equipments_CollectionChanged;
+            QueriesToBeExecuted.CollectionChanged += QueriesToBeExecuted_CollectionChanged;
+        }
+
+        private void QueriesToBeExecuted_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            ChangesButtonsEnability = QueriesToBeExecuted.Count != 0;
+        }
+
+        private void InitializeCollections()
+        {
             DataSet dataSet = new DataSet();
 
             dataSet.Tables.Add(ExecuteDataQuery("Select `equipment`.`inventory number` AS `IN`, `equipment`.`name` AS `Name`, `subdivisions`.`name` AS `Subdivision`, `states`.`state` AS `State` " +
@@ -260,13 +314,11 @@ namespace Equipment_accounting
 
             dataSet.Tables.Add(ExecuteDataQuery("select `states`.`id` AS ID, `states`.`state` AS State, `states`.`note` AS Note from `states`",
                 "State"));
-            
+
             dataSet.Tables.Add(ExecuteDataQuery("select db.id AS ID, db.name AS Name, db.responsibility AS Responsibility from subdivisions db",
                 "Subdivision"));
 
-            
-            States = new ObservableCollection<State>();
-
+            States.Clear();
             foreach (DataRow dataRow in dataSet.Tables["State"].Rows)
             {
                 States.Add(new State
@@ -276,26 +328,24 @@ namespace Equipment_accounting
                     Note = (string)dataRow["Note"]
                 });
             }
-
-            Subdivisions = new ObservableCollection<Subdivision>();
-
+            
+            Subdivisions.Clear();
             foreach (DataRow dataRow in dataSet.Tables["Subdivision"].Rows)
             {
-                Subdivisions.Add(new Subdivision 
-                { 
+                Subdivisions.Add(new Subdivision
+                {
                     ID = (int)dataRow["ID"],
                     Name = (string)dataRow["Name"],
                     Responsibility = (string)dataRow["Responsibility"]
                 });
             }
-
-            Equipments = new ObservableCollection<Equipment>();
-
+            
+            Equipments.Clear();
             foreach (DataRow dataRow in dataSet.Tables["Equipment"].Rows)
             {
-                foreach(Subdivision subdivision in Subdivisions)
+                foreach (Subdivision subdivision in Subdivisions)
                 {
-                    foreach(State state in States)
+                    foreach (State state in States)
                     {
                         if ((string)dataRow["Subdivision"] == subdivision.Name)
                             if ((string)dataRow["State"] == state.StateName)
@@ -309,14 +359,9 @@ namespace Equipment_accounting
                                 });
                             }
                     }
-
-
-                    
                 }
-                
             }
             selectedEquipment = Equipments[0];
-            Equipments.CollectionChanged += Equipments_CollectionChanged;
         }
 
         private void Equipments_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

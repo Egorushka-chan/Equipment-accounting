@@ -93,14 +93,14 @@
                         <ListBox/>
                     </Grid>
                 </GroupBox>
-                <GroupBox Header="Изменения" HorizontalAlignment="Left" Height="64" VerticalAlignment="Top" Width="234" Canvas.Left="545" Canvas.Top="365" BorderBrush="Black">
+                <GroupBox Header="Изменения" IsEnabled="{Binding ChangesButtonsEnability}" HorizontalAlignment="Left" Height="64" VerticalAlignment="Top" Width="234" Canvas.Left="545" Canvas.Top="365" BorderBrush="Black">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <Button Content="Сохранить" Margin="10" Style="{StaticResource ButtonStyle}" Command="{Binding SaveChangesCommand}" />
-                        <Button Content="Отменить" Margin="10" Grid.Column="1" Style="{StaticResource ButtonStyle}" Background="#FF700000" />
+                        <Button Content="Отменить" Margin="10" Command="{Binding CancelChangesCommand}" Grid.Column="1" Style="{StaticResource ButtonStyle}" Background="#FF700000" />
                     </Grid>
                 </GroupBox>
                 <Label Content="{Binding Equipments.Count}" Canvas.Left="158" Canvas.Top="409"/>
