@@ -1,0 +1,51 @@
+﻿<Window x:Class="Equipment_accounting.AllDataWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Equipment_accounting"
+        mc:Ignorable="d"
+        Title="AllDataWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <ResourceDictionary Source="Styles.xaml"/>
+    </Window.Resources>
+    <Viewbox Stretch="Fill">
+        <Canvas Height="450" Width="800">
+            <DataGrid Height="363" ItemsSource="{Binding Equipments}" SelectedItem="{Binding SelectedEquipment}" Canvas.Left="255" Canvas.Top="77" Width="298" IsReadOnly="True" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ИН" Binding="{Binding IN}"/>
+                    <DataGridTextColumn Header="Название" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Номер подразделения" Binding="{Binding Subdivision.ID}"/>
+                    <DataGridTextColumn Header="Статус" Binding="{Binding State.ID}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <DataGrid Height="289" ItemsSource="{Binding States}" SelectedItem="{Binding SelectedState}" Canvas.Left="10" Canvas.Top="151" Width="240" IsReadOnly="True"/>
+            <DataGrid Height="289" ItemsSource="{Binding Subdivisions}" SelectedItem="{Binding SelectedSubdivision}" Canvas.Left="558" Canvas.Top="151" Width="232" IsReadOnly="True"/>
+            <Label Content="State" HorizontalContentAlignment="Center" Canvas.Left="10" Canvas.Top="10" Height="37" Width="222" FontSize="24" FontFamily="Sylfaen"/>
+            <Label Content="Subdivision" HorizontalContentAlignment="Center" Canvas.Left="574" Canvas.Top="10" Height="37" Width="216" FontSize="24" FontFamily="Sylfaen"/>
+            <Label Content="Equipment" HorizontalContentAlignment="Center" Canvas.Left="255" Canvas.Top="10" Height="62" Width="298" FontSize="36" FontFamily="Sylfaen"/>
+            <GroupBox Header="Действия" Height="94" Canvas.Left="10" Canvas.Top="52" Width="240" BorderBrush="Black">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Button x:Name="AddStateButton" Content="Добавить" Margin="10,6,10,6" Style="{StaticResource ButtonStyle}" Click="AddStateButton_Click"/>
+                    <Button Content="Удалить" Margin="10,6,10,6" Command="{Binding DeleteStateCommand}" Style="{StaticResource ButtonStyle}" Grid.Row="1" Background="#FF700000"/>
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Действия" Height="94" Canvas.Left="558" Canvas.Top="52" Width="238" BorderBrush="Black">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Button x:Name="AddSubdivisionButton" Content="Добавить" Margin="13,6,7,6" Style="{StaticResource ButtonStyle}" Click="AddSubdivisionButton_Click"/>
+                    <Button Content="Удалить" Margin="10,6,10,6" Style="{StaticResource ButtonStyle}" Command="{Binding DeleteSubdivisionCommand}" Grid.Row="1" Background="#FF700000"/>
+                </Grid>
+            </GroupBox>
+            <Rectangle Fill="Black" Height="289" Canvas.Left="250" Stroke="Black" Canvas.Top="151" Width="5"/>
+            <Rectangle Fill="Black" Height="289" Canvas.Left="553" Stroke="Black" Canvas.Top="151" Width="5"/>
+        </Canvas>
+    </Viewbox>
+</Window>

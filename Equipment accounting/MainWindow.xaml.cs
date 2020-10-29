@@ -39,8 +39,7 @@ namespace Equipment_accounting
                 Owner = this,
                 DataContext = this.DataContext
             };
-            ViewModel viewModel = DataContext as ViewModel;
-            viewModel.OpenCommand.Execute("Add");
+            (DataContext as ViewModel).OpenCommand.Execute("AddEq");
             addWindow.ShowDialog();
         }
         ReplaceWindow replaceWindow;
@@ -51,9 +50,18 @@ namespace Equipment_accounting
                 Owner = this,
                 DataContext = this.DataContext
             };
-            ViewModel viewModel = DataContext as ViewModel;
-            viewModel.OpenCommand.Execute("Replace");
+            (DataContext as ViewModel).OpenCommand.Execute("ReplaceEq");
             replaceWindow.ShowDialog();
+        }
+        AllDataWindow allDataWindow;
+        private void AllDataButton_Click(object sender, RoutedEventArgs e)
+        {
+            allDataWindow = new AllDataWindow
+            {
+                Owner = this,
+                DataContext = this.DataContext
+            };
+            allDataWindow.Show();
         }
     }
 }

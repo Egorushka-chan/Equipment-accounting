@@ -71,8 +71,8 @@
                         </Grid.RowDefinitions>
                         <Button x:Name="AddButton" Content="Добавление" CommandParameter="Add" Margin="10" Style="{StaticResource ButtonStyle}" Click="AddButton_Click"/>
                         <Button x:Name="ReplaceButton" Content="Изменение" Margin="10" CommandParameter="Replace" Grid.Row="1" Style="{StaticResource ButtonStyle}" Click="ReplaceButton_Click"/>
-                        <Button Content="Данные всех таблиц" Margin="10" Grid.Row="2" Style="{StaticResource ButtonStyle}"/>
-                        <Button Content="Удаление записи" Margin="10" Command="{Binding DeleteCommand}" Grid.Row="3" Style="{StaticResource ButtonStyle}" Background="#FF700000"/>
+                        <Button x:Name="AllDataButton" Content="Данные всех таблиц" Margin="10" Grid.Row="2" Style="{StaticResource ButtonStyle}" Click="AllDataButton_Click"/>
+                        <Button Content="Удаление записи" Margin="10" Command="{Binding DeleteEquipmentCommand}" Grid.Row="3" Style="{StaticResource ButtonStyle}" Background="#FF700000"/>
                     </Grid>
                 </GroupBox>
                 <GroupBox Height="147" Canvas.Left="545" Canvas.Top="215" Width="234" BorderBrush="Black">
@@ -89,11 +89,11 @@
                             <RowDefinition Height="176*"/>
                             <RowDefinition Height="21*"/>
                         </Grid.RowDefinitions>
-                        <CheckBox Content="Данные связанных таблиц" Grid.Row="1" Margin="10,0" VerticalContentAlignment="Center"/>
+                        <Button Content="Поиск" Grid.Row="1" Margin="10,0,10,-9" VerticalContentAlignment="Center" Style="{StaticResource ButtonStyle}"/>
                         <ListBox/>
                     </Grid>
                 </GroupBox>
-                <GroupBox Header="Изменения" IsEnabled="{Binding ChangesButtonsEnability}" HorizontalAlignment="Left" Height="64" VerticalAlignment="Top" Width="234" Canvas.Left="545" Canvas.Top="365" BorderBrush="Black">
+                <GroupBox Header="Изменения" HorizontalAlignment="Left" Height="64" VerticalAlignment="Top" Width="234" Canvas.Left="545" Canvas.Top="365" BorderBrush="Black">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>

@@ -15,19 +15,18 @@ using System.Windows.Shapes;
 namespace Equipment_accounting
 {
     /// <summary>
-    /// Логика взаимодействия для AddWindow.xaml
+    /// Логика взаимодействия для AddSubdivisionWindow.xaml
     /// </summary>
-    public partial class AddWindow : Window
+    public partial class AddSubdivisionWindow : Window
     {
-        public AddWindow()
+        public AddSubdivisionWindow()
         {
             InitializeComponent();
-            
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Hide();
+            Close();
         }
     }
 }

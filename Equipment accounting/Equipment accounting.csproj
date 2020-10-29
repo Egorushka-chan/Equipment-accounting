@@ -60,8 +60,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AddStateWindow.xaml.cs">
+      <DependentUpon>AddStateWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AddSubdivisionWindow.xaml.cs">
+      <DependentUpon>AddSubdivisionWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AddWindow.xaml.cs">
       <DependentUpon>AddWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AllDataWindow.xaml.cs">
+      <DependentUpon>AllDataWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="RelayCommand.cs" />
     <Compile Include="ReplaceWindow.xaml.cs">
@@ -70,7 +79,19 @@
     <Compile Include="State.cs" />
     <Compile Include="Subdivision.cs" />
     <Compile Include="ViewModel.cs" />
+    <Page Include="AddStateWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AddSubdivisionWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AddWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AllDataWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -125,5 +146,6 @@
   <ItemGroup>
     <Resource Include="Icons\plus.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

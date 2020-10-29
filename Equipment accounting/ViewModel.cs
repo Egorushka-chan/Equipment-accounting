@@ -15,16 +15,13 @@ namespace Equipment_accounting
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string properity = "")
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(properity));
-            }
-                
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(properity));
         }
         //
-        public static string ConnectionInfo = "server = localhost;port = 3306;username=root;password=root;database=equipment accounting";
+        public static string ConnectionInfo = "server = localhost;port = 3306;username=root;password=tamara23;database=equipment accounting";
 
-        private ObservableCollection<string> QueriesToBeExecuted = new ObservableCollection<string>();
+        private List<string> QueriesToBeExecuted = new List<string>();
+
         public ObservableCollection<Equipment> Equipments { get; set; } // Коллекции записей
         public ObservableCollection<State> States { get; set; }
         public ObservableCollection<Subdivision> Subdivisions { get; set; }
@@ -32,7 +29,7 @@ namespace Equipment_accounting
         private Equipment selectedEquipment;
         public Equipment SelectedEquipment
         {
-            get { return selectedEquipment; }
+            get => selectedEquipment;
             set
             {
                 selectedEquipment = value;
@@ -40,7 +37,70 @@ namespace Equipment_accounting
             }
         }
 
-        private int inAddEquipment;
+        private State selectedState;
+        public State SelectedState
+        {
+            get => selectedState;
+            set
+            {
+                selectedState = value;
+                OnPropertyChanged("SelectedState");
+            }
+        }
+
+        private Subdivision selectedSubdivision;
+        public Subdivision SelectedSubdivision
+        {
+            get => selectedSubdivision;
+            set
+            {
+                selectedSubdivision = value;
+                OnPropertyChanged("SelectedSubdivision");
+            }
+        }
+
+        private int inAddEquipment; // Поля окна AddWindow
+        private string nameAddEquipment;
+        private Subdivision subdivisionAddEquipment;
+        private State stateAddEquipment;
+
+        private int idAddStateSubdivision; // Поля окон AddStateWindow и AddSubdivisionWindow
+        private string nameAddStateSubdivision;
+        private string noteAddStateSubdivision;
+
+        private bool isNofificationsOn = false;
+        private bool changesButtonsEnability = false;
+
+        public int IDAddStateSubdivision
+        {
+            get => idAddStateSubdivision;
+            set
+            {
+                idAddStateSubdivision = Math.Abs(value);
+                OnPropertyChanged(nameof(IDAddStateSubdivision));
+            }
+        }
+
+        public string NameAddStateSubdivision
+        {
+            get => nameAddStateSubdivision;
+            set
+            {
+                nameAddStateSubdivision = value;
+                OnPropertyChanged(nameof(NameAddStateSubdivision));
+            }
+        }
+
+        public string NoteAddStateSubdivision
+        {
+            get => noteAddStateSubdivision;
+            set
+            {
+                noteAddStateSubdivision = value;
+                OnPropertyChanged(nameof(NoteAddStateSubdivision));
+            }
+        }
+
         public int INAddEquipment // tb1 окон AddWindow и ReplaceWindow
         {
             get => inAddEquipment;
@@ -50,7 +110,7 @@ namespace Equipment_accounting
                 OnPropertyChanged("INAddEquipment");
             }
         }
-        private string nameAddEquipment;
+        
         public string NameAddEquipment // tb2 окон AddWindow и ReplaceWindow
         {
             get => nameAddEquipment;
@@ -62,7 +122,7 @@ namespace Equipment_accounting
             }
         }
 
-        private Subdivision subdivisionAddEquipment;
+        
         public Subdivision SubdivisionAddEquipment // tb3 окон AddWindow и ReplaceWindow
         {
             get => subdivisionAddEquipment;
@@ -73,8 +133,7 @@ namespace Equipment_accounting
             }
         }
 
-        private State stateAddEquipment; // tb4 окон AddWindow и ReplaceWindow
-        public State StateAddEquipment
+        public State StateAddEquipment   // tb4 окон AddWindow и ReplaceWindow
         {
             get => stateAddEquipment;
             set
@@ -84,8 +143,7 @@ namespace Equipment_accounting
             }
         }
 
-        private bool isNofificationsOn = false; // CheckBox "Уведомлять о изменениях"
-        public bool IsNotificationsOn
+        public bool IsNotificationsOn // CheckBox "Уведомлять о изменениях"
         {
             get => isNofificationsOn;
             set
@@ -95,7 +153,6 @@ namespace Equipment_accounting
             }
         }
 
-        private bool changesButtonsEnability = false;
         public bool ChangesButtonsEnability
         {
             get => changesButtonsEnability;
@@ -115,21 +172,39 @@ namespace Equipment_accounting
                   (openCommand = new RelayCommand(obj =>
                   {
                       string str = obj as string;
-                      if (str == "Add")
-                          INAddEquipment = Equipments.Count + 1;
-                      else if (str == "Replace")
-                          INAddEquipment = SelectedEquipment.IN;
-                      NameAddEquipment = SelectedEquipment.Name;
-                      SubdivisionAddEquipment = SelectedEquipment.Subdivision;
-                      StateAddEquipment = SelectedEquipment.State;
+                      if(str == "AddEq" || str == "ReplaceEq")
+                      {
+                          if(SelectedEquipment != null)
+                          {
+                              if (str == "AddEq")
+                                  INAddEquipment = Equipments.Count + 1;
+                              else if (str == "ReplaceEq")
+                                  INAddEquipment = SelectedEquipment.IN;
+                              NameAddEquipment = SelectedEquipment.Name;
+                              SubdivisionAddEquipment = SelectedEquipment.Subdivision;
+                              StateAddEquipment = SelectedEquipment.State;
+                          }
+                      }
+                      else if ( str == "AddSt")
+                      {
+                          IDAddStateSubdivision = States.Count + 1;
+                          NameAddStateSubdivision = SelectedState.StateName;
+                          NoteAddStateSubdivision = SelectedState.Note;
+                      }
+                      else if (str == "AddSub")
+                      {
+                          IDAddStateSubdivision = Subdivisions.Count + 1;
+                          NameAddStateSubdivision = SelectedSubdivision.Name;
+                          NoteAddStateSubdivision = SelectedSubdivision.Responsibility;
+                      }
                   }));
             }
         }
 
-        private RelayCommand addCommand;
-        public RelayCommand AddCommand // Команда добавления новой записи из окна AddWindow
-             => addCommand ??
-                    (addCommand = new RelayCommand(obj =>
+        private RelayCommand addEquipmentCommand;
+        public RelayCommand AddEquipmentCommand // Команда добавления новой записи из окна AddWindow
+             => addEquipmentCommand ??
+                    (addEquipmentCommand = new RelayCommand(obj =>
                     {
                         Equipment equipment = new Equipment()
                         {
@@ -160,6 +235,76 @@ namespace Equipment_accounting
                             MessageBox.Show("Неправильные данные");
                     }));
 
+        private RelayCommand addStateCommand;
+        public RelayCommand AddStateCommand
+        {
+            get
+            {
+                return addStateCommand ??
+                  (addStateCommand = new RelayCommand(obj =>
+                  {
+                      State state = new State
+                      {
+                          ID = IDAddStateSubdivision,
+                          StateName = NameAddStateSubdivision,
+                          Note = NoteAddStateSubdivision
+                      };
+
+                      bool IsINUnique = true;
+                      foreach (State stateForeach in States)
+                          if (stateForeach.ID == state.ID)
+                              IsINUnique = false;
+
+                      if (IsINUnique && state.StateName != default)
+                      {
+                          States.Insert(States.Count, state);
+                          QueriesToBeExecuted.Add(
+                              "INSERT INTO states VALUES " +
+                              $"({state.ID}, " +
+                              $"'{state.StateName}', " +
+                              $"'{state.Note}')");
+                      }
+                      else
+                          MessageBox.Show("Неправильные данные");
+                  }));
+            }
+        }
+
+        private RelayCommand addSubdivisionCommand;
+        public RelayCommand AddSubdivisionCommand
+        {
+            get
+            {
+                return addSubdivisionCommand ??
+                  (addSubdivisionCommand = new RelayCommand(obj =>
+                  {
+                      Subdivision subdivision = new Subdivision
+                      {
+                          ID = IDAddStateSubdivision,
+                          Name = NameAddStateSubdivision,
+                          Responsibility = NoteAddStateSubdivision
+                      };
+
+                      bool IsINUnique = true;
+                      foreach (Subdivision subdivisionsForeach in Subdivisions)
+                          if (subdivisionsForeach.ID == subdivision.ID)
+                              IsINUnique = false;
+
+                      if (IsINUnique && subdivision.Name != default)
+                      {
+                          Subdivisions.Insert(Subdivisions.Count, subdivision);
+                          QueriesToBeExecuted.Add(
+                              "INSERT INTO subdivisions VALUES " +
+                              $"({subdivision.ID}, " +
+                              $"'{subdivision.Name}', " +
+                              $"'{subdivision.Responsibility}')");
+                      }
+                      else
+                          MessageBox.Show("Неправильные данные");
+                  }));
+            }
+        }
+
         private RelayCommand replaceCommand;
         public RelayCommand ReplaceCommand 
         {
@@ -185,10 +330,6 @@ namespace Equipment_accounting
                       if (IsFieldsNotNull(equipment) & IsINOkay)
                       {
                           Equipments[Equipments.IndexOf(SelectedEquipment)] = equipment;
-                          //SelectedEquipment.IN = equipment.IN;
-                          //SelectedEquipment.Name = equipment.Name;
-                          //SelectedEquipment.State = equipment.State;
-                          //SelectedEquipment.Subdivision = equipment.Subdivision;
                           QueriesToBeExecuted.Add(
                               $"UPDATE `equipment` " +
                               $"SET `name` = '{equipment.Name}', " +
@@ -198,77 +339,7 @@ namespace Equipment_accounting
                       }
                       else
                           MessageBox.Show("Неправильные данные");
-                  }));
-            }
-        }
-
-        private RelayCommand deleteCommand;
-        public RelayCommand DeleteCommand // Удаление записи из Equipment
-        {
-            get
-            {
-                return deleteCommand ??
-                  (deleteCommand = new RelayCommand(obj =>
-                  {
-                      var result = MessageBox.Show($"Вы уверены, что хотите удалить ({SelectedEquipment.IN}, '{SelectedEquipment.Name}', {SelectedEquipment.Subdivision.Name}, {SelectedEquipment.State.StateName}) ?",
-                          "Проверка",MessageBoxButton.YesNo);
-                      if(result == MessageBoxResult.Yes)
-                      {
-                          QueriesToBeExecuted.Add($"DELETE FROM `equipment` WHERE `inventory number` = {SelectedEquipment.IN}");
-                          Equipments.Remove(SelectedEquipment);
-                          selectedEquipment = Equipments[0];
-                      }
-                  }));
-            }
-        }
-
-        private RelayCommand saveChangesCommand;
-        public RelayCommand SaveChangesCommand // Удаление записи из Equipment
-        {
-            get
-            {
-                return saveChangesCommand ??
-                  (saveChangesCommand = new RelayCommand(obj =>
-                  {
-                      string queries = Environment.NewLine;
-                      foreach(string query in QueriesToBeExecuted)
-                          queries += query + Environment.NewLine + Environment.NewLine;
-                      if (MessageBox.Show($"Будут выполнены следующие запросы: {queries}","Выполнить?",MessageBoxButton.OKCancel) == MessageBoxResult.OK)
-                      {
-                          foreach (string query in QueriesToBeExecuted)
-                          {
-                              try
-                              {
-                                  ExecuteDataQuery(query, "Тут не выводится таблицы, так что все равно");
-                              }
-                              catch(Exception e)
-                              {
-                                  MessageBox.Show($"Провалено выполенение: {Environment.NewLine}{query}{Environment.NewLine}Ошибка: {e.Message}");
-                              }
-                          }
-                          QueriesToBeExecuted.Clear();
-                      }
-                  }));
-            }
-        }
-
-        private RelayCommand cancelChangesCommand;
-        public RelayCommand CancelChangesCommand
-        {
-            get
-            {
-                return cancelChangesCommand ??
-                  (cancelChangesCommand = new RelayCommand(obj =>
-                  {
-                      if(MessageBox.Show("Отменить изменения?","Вопрос", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                      {
-                          bool Is = IsNotificationsOn;
-                          IsNotificationsOn = false;
-                          QueriesToBeExecuted.Clear();
-                          InitializeCollections();
-                          IsNotificationsOn = Is;
-                      }
-                  }));
+                  }, obj => Equipments.Count > 0));
             }
         }
 
@@ -288,22 +359,156 @@ namespace Equipment_accounting
             return IsFieldsNotNull;
         }
 
-        public ViewModel() // Инициализация
+
+        private RelayCommand deleteEquipmentCommand;
+        public RelayCommand DeleteEquipmentCommand // Удаление записи из Equipment
+        {
+            get
+            {
+                return deleteEquipmentCommand ??
+                  (deleteEquipmentCommand = new RelayCommand(obj =>
+                  {
+                      var result = MessageBox.Show($"Вы уверены, что хотите удалить ({SelectedEquipment.IN}, '{SelectedEquipment.Name}', {SelectedEquipment.Subdivision.Name}, {SelectedEquipment.State.StateName}) ?",
+                          "Проверка",MessageBoxButton.YesNo);
+                      if(result == MessageBoxResult.Yes)
+                      {
+                          QueriesToBeExecuted.Add($"DELETE FROM `equipment` WHERE `inventory number` = {SelectedEquipment.IN}");
+                          Equipments.Remove(SelectedEquipment);
+                          if(Equipments.Count > 0)
+                              selectedEquipment = Equipments[0];
+                      }
+                  }, obj => SelectedEquipment != null));
+            }
+        }
+
+        private RelayCommand deleteStateCommand;
+        public RelayCommand DeleteStateCommand
+        {
+            get
+            {
+                return deleteStateCommand ??
+                  (deleteStateCommand = new RelayCommand(obj =>
+                  {
+                      bool IsStateNotUsing = true;
+                      foreach(Equipment equipment in Equipments)
+                          if (SelectedState.ID == equipment.State.ID)
+                              IsStateNotUsing = false;
+
+                      if (IsStateNotUsing)
+                      {
+                          var result = MessageBox.Show($"Вы уверены, что хотите удалить ({SelectedState.ID}, '{SelectedState.StateName}', '{SelectedState.Note}') ?",
+                          "Проверка", MessageBoxButton.YesNo);
+                          if (result == MessageBoxResult.Yes)
+                          {
+                              QueriesToBeExecuted.Add($"DELETE FROM `states` WHERE `id` = {SelectedState.ID}");
+                              States.Remove(SelectedState);
+                              SelectedState = States[0];
+                          }
+                      }
+                      else
+                          MessageBox.Show("Это состояние используется в данный момент и не может быть удалено");
+                  }, obj => SelectedState != null && States.Count > 0));
+            }
+        }
+
+        private RelayCommand deleteSubdivisionCommand;
+        public RelayCommand DeleteSubdivisionCommand
+        {
+            get
+            {
+                return deleteSubdivisionCommand ??
+                  (deleteSubdivisionCommand = new RelayCommand(obj =>
+                  {
+                      bool IsSubdivisionNotUsing = true;
+                      foreach (Equipment equipment in Equipments)
+                          if (SelectedSubdivision.ID == equipment.Subdivision.ID)
+                              IsSubdivisionNotUsing = false;
+
+                      if (IsSubdivisionNotUsing)
+                      {
+                          var result = MessageBox.Show($"Вы уверены, что хотите удалить ({SelectedSubdivision.ID}, '{SelectedSubdivision.Name}', '{SelectedSubdivision.Responsibility}') ?",
+                          "Проверка", MessageBoxButton.YesNo);
+                          if (result == MessageBoxResult.Yes)
+                          {
+                              QueriesToBeExecuted.Add($"DELETE FROM `subdivisions` WHERE `id` = {SelectedSubdivision.ID}");
+                              Subdivisions.Remove(SelectedSubdivision);
+                              SelectedSubdivision = Subdivisions[0];
+                          }
+                      }
+                      else
+                          MessageBox.Show("Это подразделение используется в данный момент и не может быть удалено");
+                  }, obj => SelectedSubdivision != null && Subdivisions.Count > 0));
+            }
+        }
+
+        private RelayCommand saveChangesCommand;
+        public RelayCommand SaveChangesCommand // Удаление записи из Equipment
+        {
+            get
+            {
+                return saveChangesCommand ??
+                  (saveChangesCommand = new RelayCommand(obj =>
+                  {
+                      bool IsExecutingStable = true;
+                      string queries = Environment.NewLine;
+                      foreach(string query in QueriesToBeExecuted)
+                          queries += query + Environment.NewLine + Environment.NewLine;
+                      if (MessageBox.Show($"Будут выполнены следующие запросы: {queries}","Выполнить?",MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                      {
+                          foreach (string query in QueriesToBeExecuted)
+                          {
+                              try
+                              {
+                                  ExecuteDataQuery(query, "Тут не выводится таблицы, так что все равно");
+                              }
+                              catch(Exception e)
+                              {
+                                  MessageBox.Show($"Провалено выполенение: {Environment.NewLine}{query}{Environment.NewLine}Ошибка: {e.Message}");
+                                  IsExecutingStable = false;
+                              }
+                          }
+                          QueriesToBeExecuted.Clear();
+                          if (!IsExecutingStable)
+                          {
+                              InitializeCollections();
+                          }
+                      }
+                  }, obj => QueriesToBeExecuted.Count > 0));
+            }
+        }
+
+        private RelayCommand cancelChangesCommand;
+        public RelayCommand CancelChangesCommand
+        {
+            get
+            {
+                return cancelChangesCommand ??
+                  (cancelChangesCommand = new RelayCommand(obj =>
+                  {
+                      if(MessageBox.Show("Отменить изменения?","Вопрос", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                      {
+                          bool Is = IsNotificationsOn;
+                          IsNotificationsOn = false;
+                          QueriesToBeExecuted.Clear();
+                          InitializeCollections();
+                          IsNotificationsOn = Is;
+                      }
+                  }, obj => QueriesToBeExecuted.Count > 0));
+            }
+        }
+
+        public ViewModel() // Констуктор (как не странно)
         {
             States = new ObservableCollection<State>();
             Subdivisions = new ObservableCollection<Subdivision>();
             Equipments = new ObservableCollection<Equipment>();
             InitializeCollections();
             Equipments.CollectionChanged += Equipments_CollectionChanged;
-            QueriesToBeExecuted.CollectionChanged += QueriesToBeExecuted_CollectionChanged;
+            States.CollectionChanged += States_CollectionChanged;
+            Subdivisions.CollectionChanged += Subdivisions_CollectionChanged;
         }
 
-        private void QueriesToBeExecuted_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            ChangesButtonsEnability = QueriesToBeExecuted.Count != 0;
-        }
-
-        private void InitializeCollections()
+        private void InitializeCollections() // Заполнение коллекций данных
         {
             DataSet dataSet = new DataSet();
 
@@ -362,6 +567,8 @@ namespace Equipment_accounting
                 }
             }
             selectedEquipment = Equipments[0];
+            selectedState = States[0];
+            selectedSubdivision = Subdivisions[0];
         }
 
         private void Equipments_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -384,6 +591,42 @@ namespace Equipment_accounting
                     case NotifyCollectionChangedAction.Remove:
                         Equipment removedEquipment = e.OldItems[0] as Equipment;
                         MessageBox.Show($"Удалено снаряжение: {removedEquipment.IN} {removedEquipment.Name} {removedEquipment.Subdivision.Name} {removedEquipment.State.StateName}");
+                        break;
+                }
+            }
+        }
+
+        private void Subdivisions_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (IsNotificationsOn)
+            {
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        Subdivision subdivision = e.NewItems[0] as Subdivision;
+                        MessageBox.Show($"Добавлено подразделение : ({subdivision.ID}, {subdivision.Name}, {subdivision.Responsibility})");
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                        Subdivision removedSubdivision = e.OldItems[0] as Subdivision;
+                        MessageBox.Show($"Удалено снаряжение: ({removedSubdivision.ID}, {removedSubdivision.Name}, {removedSubdivision.Responsibility})");
+                        break;
+                }
+            }
+        }
+
+        private void States_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (IsNotificationsOn)
+            {
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        State state = e.NewItems[0] as State;
+                        MessageBox.Show($"Добавлено состояние : ({state.ID}, {state.StateName}, {state.Note})");
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                        State removedState = e.OldItems[0] as State;
+                        MessageBox.Show($"Удалено снаряжение: ({removedState.ID}, {removedState.StateName}, {removedState.Note})");
                         break;
                 }
             }

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Equipment_accounting" xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
         mc:Ignorable="d"
         Title="Добавление снаряжения" Height="300" Width="300" MinWidth="300" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="ToolWindow"
-        SizeToContent="WidthAndHeight" Loaded="Window_Loaded">
+        SizeToContent="WidthAndHeight">
     <Window.Resources>
         <ResourceDictionary Source="Styles.xaml">
         </ResourceDictionary>
@@ -47,7 +47,7 @@
         <Label Content="Состояние: " Margin="5" Grid.Row="3"/>
 
         <StackPanel Grid.ColumnSpan="2" HorizontalAlignment="Right" Grid.Row="4" Orientation="Horizontal">
-            <Button x:Name="bt1" Command="{Binding AddCommand}" Content="OK" Width="75" Margin="5" IsDefault="True" Style="{StaticResource ButtonStyle}" Click="Button_Click"/>
+            <Button x:Name="bt1" Command="{Binding AddEquipmentCommand}" Content="OK" Width="75" Margin="5" IsDefault="True" Style="{StaticResource ButtonStyle}" Click="Button_Click"/>
             <Button Content="Отмена" Width="75" Margin="5" IsCancel="True" Click="Button_Click" Style="{StaticResource ButtonStyle}"/>
         </StackPanel>
     </Grid>
