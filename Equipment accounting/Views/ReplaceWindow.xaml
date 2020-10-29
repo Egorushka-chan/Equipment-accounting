@@ -8,7 +8,7 @@
          Title="Настройки подключения" Height="300" Width="454.688" MinWidth="300" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="ToolWindow"
         SizeToContent="WidthAndHeight">
     <Window.Resources>
-        <ResourceDictionary Source="Styles.xaml">
+        <ResourceDictionary Source="/Equipment accounting;component/Styles.xaml" >
         </ResourceDictionary>
     </Window.Resources>
     <Grid Margin="5">

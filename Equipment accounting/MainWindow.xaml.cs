@@ -31,10 +31,10 @@ namespace Equipment_accounting
 
             ResizeMode = ResizeMode.CanResize;
         }
-        AddWindow addWindow;
+
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            addWindow = new AddWindow
+            AddWindow addWindow = new AddWindow
             {
                 Owner = this,
                 DataContext = this.DataContext
@@ -42,10 +42,10 @@ namespace Equipment_accounting
             (DataContext as ViewModel).OpenCommand.Execute("AddEq");
             addWindow.ShowDialog();
         }
-        ReplaceWindow replaceWindow;
+
         private void ReplaceButton_Click(object sender, RoutedEventArgs e)
         {
-            replaceWindow = new ReplaceWindow
+            ReplaceWindow replaceWindow = new ReplaceWindow
             {
                 Owner = this,
                 DataContext = this.DataContext
@@ -53,10 +53,10 @@ namespace Equipment_accounting
             (DataContext as ViewModel).OpenCommand.Execute("ReplaceEq");
             replaceWindow.ShowDialog();
         }
-        AllDataWindow allDataWindow;
+        
         private void AllDataButton_Click(object sender, RoutedEventArgs e)
         {
-            allDataWindow = new AllDataWindow
+            AllDataWindow allDataWindow = new AllDataWindow
             {
                 Owner = this,
                 DataContext = this.DataContext

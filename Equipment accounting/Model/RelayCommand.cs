@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Equipment_accounting
+namespace Equipment_accounting.Model
 {
     class RelayCommand : ICommand
     {

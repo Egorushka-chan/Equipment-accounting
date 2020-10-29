@@ -8,7 +8,7 @@
         Title="Добавление подразделения" Height="230" Width="300" MinWidth="300" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="ToolWindow"
         SizeToContent="WidthAndHeight">
     <Window.Resources>
-        <ResourceDictionary Source="Styles.xaml">
+        <ResourceDictionary Source="/Equipment accounting;component/Styles.xaml" >
         </ResourceDictionary>
     </Window.Resources>
     <Grid Margin="5">

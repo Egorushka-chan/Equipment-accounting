@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="AllDataWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <Window.Resources>
-        <ResourceDictionary Source="Styles.xaml"/>
+        <ResourceDictionary Source="/Equipment accounting;component/Styles.xaml" />
     </Window.Resources>
     <Viewbox Stretch="Fill">
         <Canvas Height="450" Width="800">

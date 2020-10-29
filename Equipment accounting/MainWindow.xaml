@@ -27,12 +27,12 @@
         <Label x:Name="StartLabel" Panel.ZIndex="1" Foreground="#FFC52424" FontSize="48" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="White" Content="УЧЕТ ОБОРУДОВАНИЯ" FontFamily="Rockwell Extra Bold" Visibility="Hidden"/>
         <Viewbox Stretch="Fill">
             <Canvas Height="450" Width="800">
-                <Label Content="Общее кол-во записей" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="136" Canvas.Left="22" Canvas.Top="409"/>
+                <Label Content="{Binding Equipments.Count}" ContentStringFormat="Общее кол-во записей: {0}" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="157" Canvas.Left="22" Canvas.Top="409"/>
                 <ListBox Height="345" Width="500" Canvas.Left="22" Canvas.Top="63"
-                         ItemsSource="{Binding Equipments}" SelectedItem="{Binding SelectedEquipment}">
+                         ItemsSource="{Binding EquipmentsView}" SelectedItem="{Binding SelectedEquipment}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Grid Height="33" Width="467">
+                            <Grid Height="20" Width="467">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
@@ -77,20 +77,39 @@
                 </GroupBox>
                 <GroupBox Height="147" Canvas.Left="545" Canvas.Top="215" Width="234" BorderBrush="Black">
                     <GroupBox.Header>
-                        <Button Style="{StaticResource ButtonStyle}" Width="160" FontSize="12" Height="21" Background="#FF235520">
-                            <StackPanel Orientation="Horizontal">
-                                <Image Source="Icons/plus.png"/>
-                                <Label Content="Добавление фильтра" VerticalContentAlignment="Center" Padding="0" Foreground="White" />
-                            </StackPanel>
-                        </Button>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Style="{StaticResource ButtonStyle}" Command="{Binding AddSortCommand}" Width="160" FontSize="12" Height="21" Background="#FF235520">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Icons/plus.png"/>
+                                    <Label Content="Добавление фильтра" VerticalContentAlignment="Center" Padding="0" Foreground="White" />
+                                </StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource ButtonStyle}" Command="{Binding DeleteSortCommand}" Content="Удалить" Background="#FF830000"/>
+                        </StackPanel>
                     </GroupBox.Header>
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="176*"/>
                             <RowDefinition Height="21*"/>
                         </Grid.RowDefinitions>
-                        <Button Content="Поиск" Grid.Row="1" Margin="10,0,10,-9" VerticalContentAlignment="Center" Style="{StaticResource ButtonStyle}"/>
-                        <ListBox/>
+                        <Button Content="Поиск" Grid.Row="1" Command="{Binding SortCommand}" Margin="10,0,57,-9" VerticalContentAlignment="Center" Style="{StaticResource ButtonStyle}"/>
+                        <Button Content="Убрать" Grid.Row="1" Command="{Binding SortRefreshCommand}" Margin="165,0,0,-9" VerticalContentAlignment="Center" Style="{StaticResource ButtonStyle}"/>
+                        <ListBox ItemsSource="{Binding SortFilters}" SelectedItem="{Binding SelectedFilter}" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Height="25" Width="191">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <ComboBox ItemsSource="{Binding Fields}" SelectedItem="{Binding Field, UpdateSourceTrigger=PropertyChanged}" Text="{Binding Field, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <ComboBox Grid.Column="1" ItemsSource="{Binding Actions}" SelectedItem="{Binding Action, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <TextBox Grid.Column="2"  Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
                     </Grid>
                 </GroupBox>
                 <GroupBox Header="Изменения" HorizontalAlignment="Left" Height="64" VerticalAlignment="Top" Width="234" Canvas.Left="545" Canvas.Top="365" BorderBrush="Black">
@@ -103,7 +122,6 @@
                         <Button Content="Отменить" Margin="10" Command="{Binding CancelChangesCommand}" Grid.Column="1" Style="{StaticResource ButtonStyle}" Background="#FF700000" />
                     </Grid>
                 </GroupBox>
-                <Label Content="{Binding Equipments.Count}" Canvas.Left="158" Canvas.Top="409"/>
                 <CheckBox Content="Уведомлять о изменениях" IsChecked="{Binding IsNotificationsOn}" Canvas.Left="355" Canvas.Top="415" Width="167"/>
 
             </Canvas>

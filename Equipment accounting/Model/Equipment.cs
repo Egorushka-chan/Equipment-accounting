@@ -6,17 +6,10 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Equipment_accounting
+namespace Equipment_accounting.Model
 {
-    class Equipment : INotifyPropertyChanged
+    class Equipment : BaseVM
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnProperyChanged([CallerMemberName] string properity = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(properity));
-        }
-
         private int iN;
         private string name;
         private Subdivision subdivision;
@@ -28,7 +21,7 @@ namespace Equipment_accounting
             set
             {
                 name = value;
-                OnProperyChanged("Name");
+                OnPropertyChanged("Name");
             } 
         }
         
@@ -38,7 +31,7 @@ namespace Equipment_accounting
             set
             {
                 iN = value;
-                OnProperyChanged("IN");
+                OnPropertyChanged("IN");
             }
         }
 
@@ -48,7 +41,7 @@ namespace Equipment_accounting
             set
             {
                 subdivision = value;
-                OnProperyChanged("Subdivision");
+                OnPropertyChanged("Subdivision");
             }
         }
 
@@ -58,8 +51,20 @@ namespace Equipment_accounting
             set
             {
                 state = value;
-                OnProperyChanged("State");
+                OnPropertyChanged("State");
             }
         }
+
+        /// <summary>
+        /// Возращает названия всех свойств Equipment
+        /// </summary>
+        /// <returns>
+        /// Возращает в виде массива string 
+        /// </returns>
+        public string[] GetPropertyNames()
+        {
+            return new string[] { nameof(IN), nameof(Name), nameof(Subdivision), nameof(State) };
+        }
+
     }
 }

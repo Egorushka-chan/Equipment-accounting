@@ -6,17 +6,10 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Equipment_accounting
+namespace Equipment_accounting.Model
 {
-    class State : INotifyPropertyChanged
+    class State : BaseVM
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnProperyChanged([CallerMemberName] string properity = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(properity));
-        }
-
         private int id;
         private string state;
         private string note;
@@ -27,7 +20,7 @@ namespace Equipment_accounting
             set
             {
                 id = value;
-                OnProperyChanged("ID");
+                OnPropertyChanged("ID");
             }
         }
 
@@ -37,7 +30,7 @@ namespace Equipment_accounting
             set
             {
                 state = value;
-                OnProperyChanged("StateName");
+                OnPropertyChanged("StateName");
             }
         }
 
@@ -47,7 +40,7 @@ namespace Equipment_accounting
             set
             {
                 note = value;
-                OnProperyChanged("Note");
+                OnPropertyChanged("Note");
             }
         }
     }

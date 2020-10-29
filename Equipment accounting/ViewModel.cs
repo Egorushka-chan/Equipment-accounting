@@ -7,24 +7,24 @@ using System.Data;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using MySql.Data.MySqlClient;
+using System.Linq;
+using Equipment_accounting.Model;
+using System.Windows.Data;
 
 namespace Equipment_accounting
 {
-    class ViewModel : INotifyPropertyChanged
+    class ViewModel : BaseVM
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string properity = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(properity));
-        }
-        //
         public static string ConnectionInfo = "server = localhost;port = 3306;username=root;password=tamara23;database=equipment accounting";
 
         private List<string> QueriesToBeExecuted = new List<string>();
 
+        public ObservableCollection<SortFilter> SortFilters { get; set; }
         public ObservableCollection<Equipment> Equipments { get; set; } // Коллекции записей
         public ObservableCollection<State> States { get; set; }
         public ObservableCollection<Subdivision> Subdivisions { get; set; }
+
+        public ICollectionView EquipmentsView { get; set; } // Фильрация
 
         private Equipment selectedEquipment;
         public Equipment SelectedEquipment
@@ -59,6 +59,17 @@ namespace Equipment_accounting
             }
         }
 
+        private SortFilter selectedFilter;
+        public SortFilter SelectedFilter
+        {
+            get => selectedFilter;
+            set
+            {
+                selectedFilter = value;
+                OnPropertyChanged(nameof(SelectedFilter));
+            }
+        }
+
         private int inAddEquipment; // Поля окна AddWindow
         private string nameAddEquipment;
         private Subdivision subdivisionAddEquipment;
@@ -69,7 +80,6 @@ namespace Equipment_accounting
         private string noteAddStateSubdivision;
 
         private bool isNofificationsOn = false;
-        private bool changesButtonsEnability = false;
 
         public int IDAddStateSubdivision
         {
@@ -153,13 +163,159 @@ namespace Equipment_accounting
             }
         }
 
-        public bool ChangesButtonsEnability
+        private RelayCommand addSortCommand;
+        public RelayCommand AddSortCommand
         {
-            get => changesButtonsEnability;
-            set
+            get
             {
-                changesButtonsEnability = value;
-                OnPropertyChanged("ChangesButtonsEnability");
+                return addSortCommand ??
+                  (addSortCommand = new RelayCommand(obj =>
+                  {
+                      SortFilters.Add(new SortFilter());
+                  }));
+            }
+        }
+
+        private RelayCommand deleteSortCommand;
+        public RelayCommand DeleteSortCommand // Удаление записи из Equipment
+        {
+            get
+            {
+                return deleteSortCommand ??
+                  (deleteSortCommand = new RelayCommand(obj =>
+                  {
+                      SortFilters.Remove(SelectedFilter);
+                  }, obj => SelectedFilter != null));
+            }
+        }
+
+        private RelayCommand sortCommand;
+        public RelayCommand SortCommand
+        {
+
+            get
+            {
+                return sortCommand ??
+                  (sortCommand = new RelayCommand(obj =>
+                  {
+                      //List<Equipment> ds = Equipments.ToList();
+                      //foreach (SortFilter sort in SortFilters)
+                      //{
+                      //    switch (sort.Field)
+                      //    {
+                      //        case "Name":
+                      //            var nameQuery = from equipment in Equipments
+                      //                        where sort.Value == equipment.Name
+                      //                        select equipment;
+                      //            ds = ds.Intersect(nameQuery).ToList();
+                      //            break;
+                      //        case "Subdivision":
+                      //            var subQuery = from equipment in Equipments
+                      //                            where sort.Value == equipment.Subdivision.Name
+                      //                            select equipment;
+                      //            ds = ds.Intersect(subQuery).ToList();
+                      //            break;
+                      //        case "State":
+                      //            var stQuery = from equipment in Equipments
+                      //                           where sort.Value == equipment.State.StateName
+                      //                           select equipment;
+                      //            ds = ds.Intersect(stQuery).ToList();
+                      //            break;
+                      //        case "IN":
+                      //            switch (sort.Action)
+                      //            {
+                      //                case "=":
+                      //                    var inEqQuery = from equipment in Equipments
+                      //                                    where equipment.IN.ToString() == sort.Value
+                      //                                    select equipment; 
+                      //                    ds = ds.Intersect(inEqQuery).ToList();
+                      //                    break;
+                      //                case ">":
+                      //                    var inMoreQuery = from equipment in Equipments
+                      //                                    where equipment.IN > int.Parse(sort.Value)
+                      //                                    select equipment;
+                      //                    ds = ds.Intersect(inMoreQuery).ToList();
+                      //                    break;
+                      //                case ">=":
+                      //                    var inMoreEqQuery = from equipment in Equipments
+                      //                                      where equipment.IN >= int.Parse(sort.Value)
+                      //                                      select equipment;
+                      //                    ds = ds.Intersect(inMoreEqQuery).ToList();
+                      //                    break;
+                      //                case "<":
+                      //                    var inLessQuery = from equipment in Equipments
+                      //                                        where equipment.IN < int.Parse(sort.Value)
+                      //                                        select equipment;
+                      //                    ds = ds.Intersect(inLessQuery).ToList();
+                      //                    break;
+                      //                case "<=":
+                      //                    var inLessEqQuery = from equipment in Equipments
+                      //                                      where equipment.IN <= int.Parse(sort.Value)
+                      //                                      select equipment;
+                      //                    ds = ds.Intersect(inLessEqQuery).ToList();
+                      //                    break;
+                      //            }
+                      //            break;
+
+                      //    }
+                      //}
+                      //string s = "След. записи: " + Environment.NewLine;
+                      //for (int i = 0; i < ds.Count; i++)
+                      //{
+                      //    s += ds[i].IN + Environment.NewLine;
+                      //}
+                      //MessageBox.Show(s);
+
+                      foreach (SortFilter sort in SortFilters)
+                      {
+                          EquipmentsView.Filter = (objFilter) =>
+                          {
+                              if (objFilter is Equipment equipmentMain)
+                              {
+                                  switch (sort.Field)
+                                  {
+                                      case "Name":
+                                          return equipmentMain.Name == sort.Value;
+                                      case "Subdivision":
+                                          return equipmentMain.Subdivision.Name == sort.Value;
+                                      case "State":
+                                          return equipmentMain.State.StateName == sort.Value;
+                                      case "IN":
+                                          switch (sort.Action)
+                                          {
+                                              case "=":
+                                                  return equipmentMain.IN.ToString() == sort.Value;
+                                              case ">":
+                                                  return equipmentMain.IN > int.Parse(sort.Value);
+                                              case ">=":
+                                                  return equipmentMain.IN >= int.Parse(sort.Value);
+                                              case "<":
+                                                  return equipmentMain.IN < int.Parse(sort.Value);
+                                              case "<=":
+                                                  return equipmentMain.IN <= int.Parse(sort.Value);
+                                          }
+                                          break;
+                                  }
+                              };
+
+                              return false;
+                          };
+                      }
+
+                  }, obj => SortFilters.Count > 0));
+            }
+        }
+
+        private RelayCommand sortRefreshCommand;
+        public RelayCommand SortRefreshCommand
+        {
+            get
+            {
+                return sortRefreshCommand ??
+                  (sortRefreshCommand = new RelayCommand(obj =>
+                  {
+                      EquipmentsView.Filter = (objFilter) => { return true; };
+                  }));
             }
         }
 
@@ -374,8 +530,9 @@ namespace Equipment_accounting
                       {
                           QueriesToBeExecuted.Add($"DELETE FROM `equipment` WHERE `inventory number` = {SelectedEquipment.IN}");
                           Equipments.Remove(SelectedEquipment);
-                          if(Equipments.Count > 0)
-                              selectedEquipment = Equipments[0];
+                          if (Equipments.Count > 0)
+                              SelectedEquipment = Equipments[0];
+                          else SelectedEquipment = null;
                       }
                   }, obj => SelectedEquipment != null));
             }
@@ -502,7 +659,11 @@ namespace Equipment_accounting
             States = new ObservableCollection<State>();
             Subdivisions = new ObservableCollection<Subdivision>();
             Equipments = new ObservableCollection<Equipment>();
+            SortFilters = new ObservableCollection<SortFilter>();
+
             InitializeCollections();
+            EquipmentsView = CollectionViewSource.GetDefaultView(Equipments);
+
             Equipments.CollectionChanged += Equipments_CollectionChanged;
             States.CollectionChanged += States_CollectionChanged;
             Subdivisions.CollectionChanged += Subdivisions_CollectionChanged;
@@ -632,7 +793,13 @@ namespace Equipment_accounting
             }
         }
 
-        private DataTable ExecuteDataQuery(string CommandText, string TableName)
+        /// <summary>
+        /// Выполняет запрос к базе данных
+        /// </summary>
+        /// <returns>
+        /// Если запрос не предпологает возращения данных, выходное значение можно не принимать
+        /// </returns>
+        private DataTable ExecuteDataQuery(string CommandText, string TableName = "None")
         {
             DataTable dataTable = new DataTable(TableName);
             MySqlConnection connection = new MySqlConnection(ConnectionInfo);
