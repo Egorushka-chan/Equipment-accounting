@@ -163,40 +163,40 @@ namespace Equipment_accounting
             }
         }
 
-        private RelayCommand addSortCommand;
-        public RelayCommand AddSortCommand
+        private MyCommand addSortCommand;
+        public MyCommand AddSortCommand
         {
             get
             {
                 return addSortCommand ??
-                  (addSortCommand = new RelayCommand(obj =>
+                  (addSortCommand = new MyCommand(obj =>
                   {
                       SortFilters.Add(new SortFilter());
                   }));
             }
         }
 
-        private RelayCommand deleteSortCommand;
-        public RelayCommand DeleteSortCommand // Удаление записи из Equipment
+        private MyCommand deleteSortCommand;
+        public MyCommand DeleteSortCommand // Удаление записи из Equipment
         {
             get
             {
                 return deleteSortCommand ??
-                  (deleteSortCommand = new RelayCommand(obj =>
+                  (deleteSortCommand = new MyCommand(obj =>
                   {
                       SortFilters.Remove(SelectedFilter);
                   }, obj => SelectedFilter != null));
             }
         }
 
-        private RelayCommand sortCommand;
-        public RelayCommand SortCommand
+        private MyCommand sortCommand;
+        public MyCommand SortCommand
         {
 
             get
             {
                 return sortCommand ??
-                  (sortCommand = new RelayCommand(obj =>
+                  (sortCommand = new MyCommand(obj =>
                   {
                       //List<Equipment> ds = Equipments.ToList();
                       //foreach (SortFilter sort in SortFilters)
@@ -306,26 +306,27 @@ namespace Equipment_accounting
             }
         }
 
-        private RelayCommand sortRefreshCommand;
-        public RelayCommand SortRefreshCommand
+        private MyCommand sortRefreshCommand;
+        public MyCommand SortRefreshCommand
         {
             get
             {
                 return sortRefreshCommand ??
-                  (sortRefreshCommand = new RelayCommand(obj =>
+                  (sortRefreshCommand = new MyCommand(obj =>
                   {
+                      SortFilters.Clear();
                       EquipmentsView.Filter = (objFilter) => { return true; };
                   }));
             }
         }
 
-        private RelayCommand openCommand;
-        public RelayCommand OpenCommand // Команда для автозаполнения данных в окнах ReplaceWindow и AddWindow
+        private MyCommand openCommand;
+        public MyCommand OpenCommand // Команда для автозаполнения данных в окнах ReplaceWindow и AddWindow
         {
             get
             {
                 return openCommand ??
-                  (openCommand = new RelayCommand(obj =>
+                  (openCommand = new MyCommand(obj =>
                   {
                       string str = obj as string;
                       if(str == "AddEq" || str == "ReplaceEq")
@@ -357,10 +358,10 @@ namespace Equipment_accounting
             }
         }
 
-        private RelayCommand addEquipmentCommand;
-        public RelayCommand AddEquipmentCommand // Команда добавления новой записи из окна AddWindow
+        private MyCommand addEquipmentCommand;
+        public MyCommand AddEquipmentCommand // Команда добавления новой записи из окна AddWindow
              => addEquipmentCommand ??
-                    (addEquipmentCommand = new RelayCommand(obj =>
+                    (addEquipmentCommand = new MyCommand(obj =>
                     {
                         Equipment equipment = new Equipment()
                         {
@@ -391,13 +392,13 @@ namespace Equipment_accounting
                             MessageBox.Show("Неправильные данные");
                     }));
 
-        private RelayCommand addStateCommand;
-        public RelayCommand AddStateCommand
+        private MyCommand addStateCommand;
+        public MyCommand AddStateCommand
         {
             get
             {
                 return addStateCommand ??
-                  (addStateCommand = new RelayCommand(obj =>
+                  (addStateCommand = new MyCommand(obj =>
                   {
                       State state = new State
                       {
@@ -426,13 +427,13 @@ namespace Equipment_accounting
             }
         }
 
-        private RelayCommand addSubdivisionCommand;
-        public RelayCommand AddSubdivisionCommand
+        private MyCommand addSubdivisionCommand;
+        public MyCommand AddSubdivisionCommand
         {
             get
             {
                 return addSubdivisionCommand ??
-                  (addSubdivisionCommand = new RelayCommand(obj =>
+                  (addSubdivisionCommand = new MyCommand(obj =>
                   {
                       Subdivision subdivision = new Subdivision
                       {
@@ -461,13 +462,13 @@ namespace Equipment_accounting
             }
         }
 
-        private RelayCommand replaceCommand;
-        public RelayCommand ReplaceCommand 
+        private MyCommand replaceCommand;
+        public MyCommand ReplaceCommand 
         {
             get
             {
                 return replaceCommand ??
-                  (replaceCommand = new RelayCommand(obj =>
+                  (replaceCommand = new MyCommand(obj =>
                   {
                       Equipment equipment = new Equipment()
                       {
@@ -516,13 +517,13 @@ namespace Equipment_accounting
         }
 
 
-        private RelayCommand deleteEquipmentCommand;
-        public RelayCommand DeleteEquipmentCommand // Удаление записи из Equipment
+        private MyCommand deleteEquipmentCommand;
+        public MyCommand DeleteEquipmentCommand // Удаление записи из Equipment
         {
             get
             {
                 return deleteEquipmentCommand ??
-                  (deleteEquipmentCommand = new RelayCommand(obj =>
+                  (deleteEquipmentCommand = new MyCommand(obj =>
                   {
                       var result = MessageBox.Show($"Вы уверены, что хотите удалить ({SelectedEquipment.IN}, '{SelectedEquipment.Name}', {SelectedEquipment.Subdivision.Name}, {SelectedEquipment.State.StateName}) ?",
                           "Проверка",MessageBoxButton.YesNo);
@@ -538,13 +539,13 @@ namespace Equipment_accounting
             }
         }
 
-        private RelayCommand deleteStateCommand;
-        public RelayCommand DeleteStateCommand
+        private MyCommand deleteStateCommand;
+        public MyCommand DeleteStateCommand
         {
             get
             {
                 return deleteStateCommand ??
-                  (deleteStateCommand = new RelayCommand(obj =>
+                  (deleteStateCommand = new MyCommand(obj =>
                   {
                       bool IsStateNotUsing = true;
                       foreach(Equipment equipment in Equipments)
@@ -568,13 +569,13 @@ namespace Equipment_accounting
             }
         }
 
-        private RelayCommand deleteSubdivisionCommand;
-        public RelayCommand DeleteSubdivisionCommand
+        private MyCommand deleteSubdivisionCommand;
+        public MyCommand DeleteSubdivisionCommand
         {
             get
             {
                 return deleteSubdivisionCommand ??
-                  (deleteSubdivisionCommand = new RelayCommand(obj =>
+                  (deleteSubdivisionCommand = new MyCommand(obj =>
                   {
                       bool IsSubdivisionNotUsing = true;
                       foreach (Equipment equipment in Equipments)
@@ -598,13 +599,13 @@ namespace Equipment_accounting
             }
         }
 
-        private RelayCommand saveChangesCommand;
-        public RelayCommand SaveChangesCommand // Удаление записи из Equipment
+        private MyCommand saveChangesCommand;
+        public MyCommand SaveChangesCommand // Удаление записи из Equipment
         {
             get
             {
                 return saveChangesCommand ??
-                  (saveChangesCommand = new RelayCommand(obj =>
+                  (saveChangesCommand = new MyCommand(obj =>
                   {
                       bool IsExecutingStable = true;
                       string queries = Environment.NewLine;
@@ -634,13 +635,13 @@ namespace Equipment_accounting
             }
         }
 
-        private RelayCommand cancelChangesCommand;
-        public RelayCommand CancelChangesCommand
+        private MyCommand cancelChangesCommand;
+        public MyCommand CancelChangesCommand
         {
             get
             {
                 return cancelChangesCommand ??
-                  (cancelChangesCommand = new RelayCommand(obj =>
+                  (cancelChangesCommand = new MyCommand(obj =>
                   {
                       if(MessageBox.Show("Отменить изменения?","Вопрос", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                       {

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Equipment_accounting"
         mc:Ignorable="d"
-         Title="Настройки подключения" Height="300" Width="454.688" MinWidth="300" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="ToolWindow"
+         Title="Изменение оборудования" Height="300" Width="454.688" MinWidth="300" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="ToolWindow"
         SizeToContent="WidthAndHeight">
     <Window.Resources>
         <ResourceDictionary Source="/Equipment accounting;component/Styles.xaml" >
